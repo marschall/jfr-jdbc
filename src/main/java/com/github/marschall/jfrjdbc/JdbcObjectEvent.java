@@ -10,32 +10,21 @@ import jdk.jfr.Label;
 @Category("JDBC")
 class JdbcObjectEvent extends Event {
   
+  JdbcObjectEvent() {
+    super();
+  }
+  
   @Label("Object")
   @Description("The object type executing the operation")
-  private String operationObject;
+  String operationObject;
 
   @Label("Operation Name")
   @Description("The name of the JDBC operation")
-  private String operationName;
+  String operationName;
 
   @Label("Query")
   @Description("The SQL query string")
-  private String query;
-
-  String getOperationName() {
-    return this.operationName;
-  }
-
-  void setOperationName(String operationName) {
-    this.operationName = operationName;
-  }
-
-  String getQuery() {
-    return this.query;
-  }
-
-  void setQuery(String query) {
-    this.query = query;
-  }
+  String query;
+  
 
 }

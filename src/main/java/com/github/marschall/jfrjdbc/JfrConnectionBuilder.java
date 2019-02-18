@@ -32,8 +32,16 @@ final class JfrConnectionBuilder implements ConnectionBuilder {
   }
 
   public Connection build() throws SQLException {
-    Connection connection = delegate.build();
-    return new JfrConnection(connection);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "ConnectionBuilder";
+    event.operationName = "build";
+    try {
+      Connection connection = delegate.build();
+      return new JfrConnection(connection);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
 

@@ -35,14 +35,30 @@ public final class JfrDataSource implements DataSource {
 
   @Override
   public Connection getConnection() throws SQLException {
-    var connection = this.delegate.getConnection();
-    return new JfrConnection(connection);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "DataSource";
+    event.operationName = "getConnection";
+    try {
+      var connection = this.delegate.getConnection();
+      return new JfrConnection(connection);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
-    var connection = this.delegate.getConnection(username, password);
-    return new JfrConnection(connection);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "DataSource";
+    event.operationName = "getConnection";
+    try {
+      var connection = this.delegate.getConnection(username, password);
+      return new JfrConnection(connection);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
