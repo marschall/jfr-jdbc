@@ -21,7 +21,22 @@ class JfrStatement implements Statement {
   }
 
   public ResultSet executeQuery(String sql) throws SQLException {
-    return delegate.executeQuery(sql);
+    var callEvent = new JfrCallEvent(sql);
+    var objectEvent = new JdbcObjectEvent();
+    objectEvent.operationObject = "Statement";
+    objectEvent.operationName = "executeQuery";
+    objectEvent.query = sql;
+    
+    callEvent.begin();
+    objectEvent.begin();
+    
+    try {
+      var resultSet = delegate.executeQuery(sql);
+      return new JfrResultSet(resultSet, callEvent);
+    } finally {
+      objectEvent.end();
+      objectEvent.commit();
+    }
   }
 
   public boolean isWrapperFor(Class<?> iface) throws SQLException {

@@ -9,11 +9,11 @@ import jdk.jfr.Label;
 @Description("A JDBC Operation")
 @Category("JDBC")
 class JdbcObjectEvent extends Event {
-  
+
   JdbcObjectEvent() {
     super();
   }
-  
+
   @Label("Object")
   @Description("The object type executing the operation")
   String operationObject;
@@ -25,6 +25,5 @@ class JdbcObjectEvent extends Event {
   @Label("Query")
   @Description("The SQL query string")
   String query;
-  
 
 }

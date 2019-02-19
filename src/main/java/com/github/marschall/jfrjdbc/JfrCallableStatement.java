@@ -33,92 +33,78 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
 
   @Override
   public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
-    // TODO Auto-generated method stub
-
+    this.delegate.registerOutParameter(parameterIndex, sqlType);
   }
 
   @Override
   public void registerOutParameter(int parameterIndex, int sqlType, int scale) throws SQLException {
-    // TODO Auto-generated method stub
-
+    this.delegate.registerOutParameter(parameterIndex, sqlType, scale);
   }
 
   @Override
   public boolean wasNull() throws SQLException {
-    // TODO Auto-generated method stub
-    return false;
+    return this.delegate.wasNull();
   }
 
   @Override
   public String getString(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    return this.delegate.getString(parameterIndex);
   }
 
   @Override
   public boolean getBoolean(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return false;
+    return this.delegate.getBoolean(parameterIndex);
   }
 
   @Override
   public byte getByte(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.delegate.getByte(parameterIndex);
   }
 
   @Override
   public short getShort(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.delegate.getShort(parameterIndex);
   }
 
   @Override
   public int getInt(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.delegate.getInt(parameterIndex);
   }
 
   @Override
   public long getLong(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.delegate.getLong(parameterIndex);
   }
 
   @Override
   public float getFloat(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.delegate.getFloat(parameterIndex);
   }
 
   @Override
   public double getDouble(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.delegate.getDouble(parameterIndex);
   }
 
   @Override
+  @Deprecated
   public BigDecimal getBigDecimal(int parameterIndex, int scale) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    return this.delegate.getBigDecimal(parameterIndex, scale);
   }
 
   @Override
   public byte[] getBytes(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    return this.delegate.getBytes(parameterIndex);
   }
 
   @Override
   public Date getDate(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    return this.delegate.getDate(parameterIndex);
   }
 
   @Override
   public Time getTime(int parameterIndex) throws SQLException {
-    // TODO Auto-generated method stub
-    return null;
+    return this.delegate.getTime(parameterIndex);
   }
 
   @Override
