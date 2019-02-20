@@ -3,6 +3,15 @@ JFR JDBC
 
 A JDBC driver that wraps an other JDBC driver and generates JFR events.
 
+Usage
+-----
+
+Simply wrap your `DataSource` with a `JfrDataSource`
+
+```java
+new JfrDataSource(dataSource)
+```
+
 Caveats
 -------
 - does not work with Oracle explicit statement caching

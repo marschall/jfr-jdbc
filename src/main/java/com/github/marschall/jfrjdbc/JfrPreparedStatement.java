@@ -97,13 +97,39 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     }
   }
 
-
+  @Override
   public long executeLargeUpdate() throws SQLException {
     var event = newObjectEvent("executeLargeUpdate");
     event.begin();
     
     try {
       return this.delegate.executeLargeUpdate();
+    } finally {
+      event.end();
+      event.commit();
+    }
+  }
+  
+  @Override
+  public int[] executeBatch() throws SQLException {
+    var event = newObjectEvent("executeBatch");
+    event.begin();
+    
+    try {
+      return this.delegate.executeBatch();
+    } finally {
+      event.end();
+      event.commit();
+    }
+  }
+  
+  @Override
+  public long[] executeLargeBatch() throws SQLException {
+    var event = newObjectEvent("executeLargeBatch");
+    event.begin();
+    
+    try {
+      return this.delegate.executeLargeBatch();
     } finally {
       event.end();
       event.commit();
