@@ -32,7 +32,7 @@ class JfrStatement implements Statement {
     
     try {
       var resultSet = delegate.executeQuery(sql);
-      return new JfrResultSet(resultSet, callEvent);
+      return new JfrCallResultSet(resultSet, callEvent);
     } finally {
       objectEvent.end();
       objectEvent.commit();

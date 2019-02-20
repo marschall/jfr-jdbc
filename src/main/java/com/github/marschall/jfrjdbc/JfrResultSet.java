@@ -24,33 +24,17 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.Objects;
 
-import jdk.jfr.Event;
-
-final class JfrResultSet implements ResultSet {
+class JfrResultSet implements ResultSet {
   
-  private final ResultSet delegate;
-  
-  private boolean closed;
+  final ResultSet delegate;
 
-  private Event event;
-
-  JfrResultSet(ResultSet delegate, Event event) {
+  JfrResultSet(ResultSet delegate) {
     Objects.requireNonNull(delegate, "delegate");
-    Objects.requireNonNull(event, "event");
-    this.event = event;
     this.delegate = delegate;
-    this.closed = false;
-    this.event = event;
   }
   
   @Override
   public void close() throws SQLException {
-    if (!this.closed) {
-      this.event.end();
-      this.event.commit();
-      this.event = null;
-      this.closed = true;
-    }
     this.delegate.close();
   }
 

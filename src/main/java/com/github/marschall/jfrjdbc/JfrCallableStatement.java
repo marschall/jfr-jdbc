@@ -24,11 +24,28 @@ import java.util.Objects;
 final class JfrCallableStatement extends JfrPreparedStatement implements CallableStatement {
 
   private final CallableStatement delegate;
+  
+  private final JfrCallEvent callEvent;
+  
+  private boolean closed;
 
-  JfrCallableStatement(CallableStatement delegate) {
-    super(delegate);
+  JfrCallableStatement(CallableStatement delegate, JfrCallEvent callEvent) {
+    super(delegate, callEvent);
     Objects.requireNonNull(delegate, "delegate");
+    Objects.requireNonNull(callEvent, "callEvent");
+    this.callEvent = callEvent;
     this.delegate = delegate;
+    this.closed = false;
+  }
+  
+  @Override
+  public void close() throws SQLException {
+    if (!this.closed) {
+      this.callEvent.end();
+      this.callEvent.commit();
+      this.closed = true;
+    }
+    this.delegate.close();
   }
 
   @Override
