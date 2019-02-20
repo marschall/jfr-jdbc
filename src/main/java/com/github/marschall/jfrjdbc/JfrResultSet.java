@@ -50,7 +50,16 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean next() throws SQLException {
-    return this.delegate.next();
+    var event = new JdbcObjectEvent();
+    event.operationObject = "ResultSet";
+    event.operationName = "next";
+    event.begin();
+    try {
+      return this.delegate.next();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
@@ -239,7 +248,16 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public ResultSetMetaData getMetaData() throws SQLException {
-    return this.delegate.getMetaData();
+    var event = new JdbcObjectEvent();
+    event.operationObject = "ResultSet";
+    event.operationName = "getMetaData";
+    event.begin();
+    try {
+      return this.delegate.getMetaData();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override

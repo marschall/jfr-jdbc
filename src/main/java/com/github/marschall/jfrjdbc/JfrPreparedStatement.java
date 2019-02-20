@@ -269,7 +269,16 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public ResultSetMetaData getMetaData() throws SQLException {
-    return this.delegate.getMetaData();
+    var event = new JdbcObjectEvent();
+    event.operationObject = "PreparedStatement";
+    event.operationName = "getMetaData";
+    event.begin();
+    try {
+      return this.delegate.getMetaData();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
@@ -299,7 +308,16 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public ParameterMetaData getParameterMetaData() throws SQLException {
-    return this.delegate.getParameterMetaData();
+    var event = new JdbcObjectEvent();
+    event.operationObject = "PreparedStatement";
+    event.operationName = "getParameterMetaData";
+    event.begin();
+    try {
+      return this.delegate.getParameterMetaData();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
