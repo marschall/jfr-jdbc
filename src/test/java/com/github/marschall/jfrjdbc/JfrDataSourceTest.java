@@ -1,6 +1,10 @@
 package com.github.marschall.jfrjdbc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.Collections;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,11 +39,19 @@ class JfrDataSourceTest {
     Integer result = this.jdbcTemplate.queryForObject("SELECT 1 FROM dual", Integer.class);
     assertEquals(Integer.valueOf(1), result);
   }
-  
+
   @Test
   void selectWithBindParameters() {
     Integer result = this.jdbcTemplate.queryForObject("SELECT 1 FROM dual WHERE 1 < ?", Integer.class, 2);
     assertEquals(Integer.valueOf(1), result);
+  }
+
+  @Test
+  void callFunction() {
+    Map<String, Object> result = this.jdbcTemplate.call(
+        con -> con.prepareCall("{? = call MEMORY_USED()}"),
+        Collections.emptyList());
+    assertNotNull(result);
   }
 
 }
