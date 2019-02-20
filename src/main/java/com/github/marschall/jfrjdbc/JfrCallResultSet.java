@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class JfrCallResultSet extends JfrResultSet {
-  
+
   private boolean closed;
 
   private JfrCallEvent callEvent;

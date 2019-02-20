@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.Objects;
 
 class JfrStatement implements Statement {
-  
+
   private final Statement delegate;
 
   JfrStatement(Statement delegate) {
@@ -24,130 +24,159 @@ class JfrStatement implements Statement {
     return event;
   }
 
+  @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
-    return delegate.unwrap(iface);
+    return this.delegate.unwrap(iface);
   }
 
+  @Override
   public boolean isWrapperFor(Class<?> iface) throws SQLException {
-    return delegate.isWrapperFor(iface);
+    return this.delegate.isWrapperFor(iface);
   }
 
+  @Override
   public void close() throws SQLException {
-    delegate.close();
+    this.delegate.close();
   }
 
+  @Override
   public int getMaxFieldSize() throws SQLException {
-    return delegate.getMaxFieldSize();
+    return this.delegate.getMaxFieldSize();
   }
 
+  @Override
   public void setMaxFieldSize(int max) throws SQLException {
-    delegate.setMaxFieldSize(max);
+    this.delegate.setMaxFieldSize(max);
   }
 
+  @Override
   public int getMaxRows() throws SQLException {
-    return delegate.getMaxRows();
+    return this.delegate.getMaxRows();
   }
 
+  @Override
   public void setMaxRows(int max) throws SQLException {
-    delegate.setMaxRows(max);
+    this.delegate.setMaxRows(max);
   }
 
+  @Override
   public void setEscapeProcessing(boolean enable) throws SQLException {
-    delegate.setEscapeProcessing(enable);
+    this.delegate.setEscapeProcessing(enable);
   }
 
+  @Override
   public int getQueryTimeout() throws SQLException {
-    return delegate.getQueryTimeout();
+    return this.delegate.getQueryTimeout();
   }
 
+  @Override
   public void setQueryTimeout(int seconds) throws SQLException {
-    delegate.setQueryTimeout(seconds);
+    this.delegate.setQueryTimeout(seconds);
   }
 
+  @Override
   public void cancel() throws SQLException {
-    delegate.cancel();
+    this.delegate.cancel();
   }
 
+  @Override
   public SQLWarning getWarnings() throws SQLException {
-    return delegate.getWarnings();
+    return this.delegate.getWarnings();
   }
 
+  @Override
   public void clearWarnings() throws SQLException {
-    delegate.clearWarnings();
+    this.delegate.clearWarnings();
   }
 
+  @Override
   public void setCursorName(String name) throws SQLException {
-    delegate.setCursorName(name);
+    this.delegate.setCursorName(name);
   }
 
+  @Override
   public ResultSet getResultSet() throws SQLException {
-    return delegate.getResultSet();
+    return this.delegate.getResultSet();
   }
 
+  @Override
   public int getUpdateCount() throws SQLException {
-    return delegate.getUpdateCount();
+    return this.delegate.getUpdateCount();
   }
 
+  @Override
   public boolean getMoreResults() throws SQLException {
-    return delegate.getMoreResults();
+    return this.delegate.getMoreResults();
   }
 
+  @Override
   public void setFetchDirection(int direction) throws SQLException {
-    delegate.setFetchDirection(direction);
+    this.delegate.setFetchDirection(direction);
   }
 
+  @Override
   public int getFetchDirection() throws SQLException {
-    return delegate.getFetchDirection();
+    return this.delegate.getFetchDirection();
   }
 
+  @Override
   public void setFetchSize(int rows) throws SQLException {
-    delegate.setFetchSize(rows);
+    this.delegate.setFetchSize(rows);
   }
 
+  @Override
   public int getFetchSize() throws SQLException {
-    return delegate.getFetchSize();
+    return this.delegate.getFetchSize();
   }
 
+  @Override
   public int getResultSetConcurrency() throws SQLException {
-    return delegate.getResultSetConcurrency();
+    return this.delegate.getResultSetConcurrency();
   }
 
+  @Override
   public int getResultSetType() throws SQLException {
-    return delegate.getResultSetType();
+    return this.delegate.getResultSetType();
   }
 
+  @Override
   public void addBatch(String sql) throws SQLException {
-    delegate.addBatch(sql);
+    this.delegate.addBatch(sql);
   }
 
+  @Override
   public void clearBatch() throws SQLException {
-    delegate.clearBatch();
+    this.delegate.clearBatch();
   }
 
+  @Override
   public Connection getConnection() throws SQLException {
-    return delegate.getConnection();
+    return this.delegate.getConnection();
   }
 
+  @Override
   public boolean getMoreResults(int current) throws SQLException {
-    return delegate.getMoreResults(current);
+    return this.delegate.getMoreResults(current);
   }
 
+  @Override
   public ResultSet getGeneratedKeys() throws SQLException {
-    return delegate.getGeneratedKeys();
+    return this.delegate.getGeneratedKeys();
   }
 
+  @Override
   public ResultSet executeQuery(String sql) throws SQLException {
     var callEvent = new JfrCallEvent(sql);
     var objectEvent = new JdbcObjectEvent();
     objectEvent.operationObject = "Statement";
     objectEvent.operationName = "executeQuery";
     objectEvent.query = sql;
-    
+
     callEvent.begin();
     objectEvent.begin();
-    
+
     try {
-      var resultSet = delegate.executeQuery(sql);
+      var resultSet = this.delegate.executeQuery(sql);
       return new JfrCallResultSet(resultSet, callEvent);
     } finally {
       objectEvent.end();
@@ -155,197 +184,224 @@ class JfrStatement implements Statement {
     }
   }
 
+  @Override
   public boolean execute(String sql) throws SQLException {
     var event = this.newObjectEvent("execute", sql);
     event.begin();
     try {
-      return delegate.execute(sql);
+      return this.delegate.execute(sql);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public int executeUpdate(String sql) throws SQLException {
     var event = this.newObjectEvent("executeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeUpdate(sql);
+      return this.delegate.executeUpdate(sql);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
     var event = this.newObjectEvent("executeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeUpdate(sql, autoGeneratedKeys);
+      return this.delegate.executeUpdate(sql, autoGeneratedKeys);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
     var event = this.newObjectEvent("executeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeUpdate(sql, columnIndexes);
+      return this.delegate.executeUpdate(sql, columnIndexes);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public int executeUpdate(String sql, String[] columnNames) throws SQLException {
     var event = this.newObjectEvent("executeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeUpdate(sql, columnNames);
+      return this.delegate.executeUpdate(sql, columnNames);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
     var event = this.newObjectEvent("execute", sql);
     event.begin();
     try {
-      return delegate.execute(sql, autoGeneratedKeys);
+      return this.delegate.execute(sql, autoGeneratedKeys);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public boolean execute(String sql, int[] columnIndexes) throws SQLException {
     var event = this.newObjectEvent("execute", sql);
     event.begin();
     try {
-      return delegate.execute(sql, columnIndexes);
+      return this.delegate.execute(sql, columnIndexes);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public boolean execute(String sql, String[] columnNames) throws SQLException {
     var event = this.newObjectEvent("execute", sql);
     event.begin();
     try {
-      return delegate.execute(sql, columnNames);
+      return this.delegate.execute(sql, columnNames);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public int[] executeBatch() throws SQLException {
-    return delegate.executeBatch();
+    return this.delegate.executeBatch();
   }
 
+  @Override
   public long[] executeLargeBatch() throws SQLException {
-    return delegate.executeLargeBatch();
+    return this.delegate.executeLargeBatch();
   }
 
+  @Override
   public long executeLargeUpdate(String sql) throws SQLException {
     var event = this.newObjectEvent("executeLargeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeLargeUpdate(sql);
+      return this.delegate.executeLargeUpdate(sql);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public long executeLargeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
     var event = this.newObjectEvent("executeLargeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeLargeUpdate(sql, autoGeneratedKeys);
+      return this.delegate.executeLargeUpdate(sql, autoGeneratedKeys);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public long executeLargeUpdate(String sql, int[] columnIndexes) throws SQLException {
     var event = this.newObjectEvent("executeLargeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeLargeUpdate(sql, columnIndexes);
+      return this.delegate.executeLargeUpdate(sql, columnIndexes);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public long executeLargeUpdate(String sql, String[] columnNames) throws SQLException {
     var event = this.newObjectEvent("executeLargeUpdate", sql);
     event.begin();
     try {
-      return delegate.executeLargeUpdate(sql, columnNames);
+      return this.delegate.executeLargeUpdate(sql, columnNames);
     } finally {
       event.end();
       event.commit();
     }
   }
 
+  @Override
   public int getResultSetHoldability() throws SQLException {
-    return delegate.getResultSetHoldability();
+    return this.delegate.getResultSetHoldability();
   }
 
+  @Override
   public boolean isClosed() throws SQLException {
-    return delegate.isClosed();
+    return this.delegate.isClosed();
   }
 
+  @Override
   public void setPoolable(boolean poolable) throws SQLException {
-    delegate.setPoolable(poolable);
+    this.delegate.setPoolable(poolable);
   }
 
+  @Override
   public boolean isPoolable() throws SQLException {
-    return delegate.isPoolable();
+    return this.delegate.isPoolable();
   }
 
+  @Override
   public void closeOnCompletion() throws SQLException {
-    delegate.closeOnCompletion();
+    this.delegate.closeOnCompletion();
   }
 
+  @Override
   public boolean isCloseOnCompletion() throws SQLException {
-    return delegate.isCloseOnCompletion();
+    return this.delegate.isCloseOnCompletion();
   }
 
+  @Override
   public long getLargeUpdateCount() throws SQLException {
-    return delegate.getLargeUpdateCount();
+    return this.delegate.getLargeUpdateCount();
   }
 
+  @Override
   public void setLargeMaxRows(long max) throws SQLException {
-    delegate.setLargeMaxRows(max);
+    this.delegate.setLargeMaxRows(max);
   }
 
+  @Override
   public long getLargeMaxRows() throws SQLException {
-    return delegate.getLargeMaxRows();
+    return this.delegate.getLargeMaxRows();
   }
 
+  @Override
   public String enquoteLiteral(String val) throws SQLException {
-    return delegate.enquoteLiteral(val);
+    return this.delegate.enquoteLiteral(val);
   }
 
+  @Override
   public String enquoteIdentifier(String identifier, boolean alwaysQuote) throws SQLException {
-    return delegate.enquoteIdentifier(identifier, alwaysQuote);
+    return this.delegate.enquoteIdentifier(identifier, alwaysQuote);
   }
 
+  @Override
   public boolean isSimpleIdentifier(String identifier) throws SQLException {
-    return delegate.isSimpleIdentifier(identifier);
+    return this.delegate.isSimpleIdentifier(identifier);
   }
 
+  @Override
   public String enquoteNCharLiteral(String val) throws SQLException {
-    return delegate.enquoteNCharLiteral(val);
+    return this.delegate.enquoteNCharLiteral(val);
   }
-  
+
 
 }

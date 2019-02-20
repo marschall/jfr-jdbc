@@ -24,9 +24,9 @@ import java.util.Objects;
 final class JfrCallableStatement extends JfrPreparedStatement implements CallableStatement {
 
   private final CallableStatement delegate;
-  
+
   private final JfrCallEvent callEvent;
-  
+
   private boolean closed;
 
   JfrCallableStatement(CallableStatement delegate, JfrCallEvent callEvent) {
@@ -37,7 +37,7 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
     this.delegate = delegate;
     this.closed = false;
   }
-  
+
   @Override
   public void close() throws SQLException {
     if (!this.closed) {
@@ -618,7 +618,7 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
   public void setObject(String parameterName, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException {
     this.delegate.setObject(parameterName, x, targetSqlType, scaleOrLength);
   }
-  
+
   @Override
   public void setObject(String parameterName, Object x, SQLType targetSqlType) throws SQLException {
     this.delegate.setObject(parameterName, x, targetSqlType);

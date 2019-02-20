@@ -26,7 +26,7 @@ class JfrDataSourceTest {
     this.database = new EmbeddedDatabaseBuilder()
         .setType(EmbeddedDatabaseType.H2)
         .build();
-    this.jdbcTemplate = new JdbcTemplate(new JfrDataSource(database));
+    this.jdbcTemplate = new JdbcTemplate(new JfrDataSource(this.database));
   }
 
   @AfterEach

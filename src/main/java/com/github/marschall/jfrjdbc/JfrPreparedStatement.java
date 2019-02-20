@@ -24,11 +24,11 @@ import java.util.Calendar;
 import java.util.Objects;
 
 class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
-  
+
   private final PreparedStatement delegate;
-  
+
   private final JfrCallEvent callEvent;
-  
+
   private boolean closed;
 
   JfrPreparedStatement(PreparedStatement delegate, JfrCallEvent callEvent) {
@@ -39,7 +39,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     this.delegate = delegate;
     this.closed = false;
   }
-  
+
   @Override
   public void close() throws SQLException {
     if (!this.closed) {
@@ -54,15 +54,15 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     var event = new JdbcObjectEvent();
     event.operationObject = "PreparedStatement";
     event.operationName = operationName;
-    event.query = callEvent.query;
+    event.query = this.callEvent.query;
     return event;
   }
 
   @Override
   public ResultSet executeQuery() throws SQLException {
-    var event = newObjectEvent("executeQuery");
+    var event = this.newObjectEvent("executeQuery");
     event.begin();
-    
+
     try {
       return new JfrResultSet(this.delegate.executeQuery());
     } finally {
@@ -73,9 +73,9 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public int executeUpdate() throws SQLException {
-    var event = newObjectEvent("executeUpdate");
+    var event = this.newObjectEvent("executeUpdate");
     event.begin();
-    
+
     try {
       return this.delegate.executeUpdate();
     } finally {
@@ -86,9 +86,9 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public boolean execute() throws SQLException {
-    var event = newObjectEvent("execute");
+    var event = this.newObjectEvent("execute");
     event.begin();
-    
+
     try {
       return this.delegate.execute();
     } finally {
@@ -99,9 +99,9 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public long executeLargeUpdate() throws SQLException {
-    var event = newObjectEvent("executeLargeUpdate");
+    var event = this.newObjectEvent("executeLargeUpdate");
     event.begin();
-    
+
     try {
       return this.delegate.executeLargeUpdate();
     } finally {
@@ -109,12 +109,12 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
       event.commit();
     }
   }
-  
+
   @Override
   public int[] executeBatch() throws SQLException {
-    var event = newObjectEvent("executeBatch");
+    var event = this.newObjectEvent("executeBatch");
     event.begin();
-    
+
     try {
       return this.delegate.executeBatch();
     } finally {
@@ -122,12 +122,12 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
       event.commit();
     }
   }
-  
+
   @Override
   public long[] executeLargeBatch() throws SQLException {
-    var event = newObjectEvent("executeLargeBatch");
+    var event = this.newObjectEvent("executeLargeBatch");
     event.begin();
-    
+
     try {
       return this.delegate.executeLargeBatch();
     } finally {
@@ -397,10 +397,12 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     this.delegate.setNClob(parameterIndex, reader);
   }
 
+  @Override
   public void setObject(int parameterIndex, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException {
     this.delegate.setObject(parameterIndex, x, targetSqlType, scaleOrLength);
   }
 
+  @Override
   public void setObject(int parameterIndex, Object x, SQLType targetSqlType) throws SQLException {
     this.delegate.setObject(parameterIndex, x, targetSqlType);
   }

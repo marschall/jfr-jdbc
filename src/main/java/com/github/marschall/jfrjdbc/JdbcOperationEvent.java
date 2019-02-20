@@ -9,13 +9,13 @@ import jdk.jfr.Label;
 @Description("A JDBC Object")
 @Category("JDBC")
 class JdbcOperationEvent extends Event {
-  
+
   @Label("Type")
   @Description("The object type")
   private String type;
 
   String getType() {
-    return type;
+    return this.type;
   }
 
   void setType(String type) {

@@ -7,7 +7,7 @@ import java.sql.ShardingKey;
 import java.util.Objects;
 
 final class JfrConnectionBuilder implements ConnectionBuilder {
-  
+
   private final ConnectionBuilder delegate;
 
   JfrConnectionBuilder(ConnectionBuilder delegate) {
@@ -15,28 +15,33 @@ final class JfrConnectionBuilder implements ConnectionBuilder {
     this.delegate = delegate;
   }
 
+  @Override
   public ConnectionBuilder user(String username) {
-    return delegate.user(username);
+    return this.delegate.user(username);
   }
 
+  @Override
   public ConnectionBuilder password(String password) {
-    return delegate.password(password);
+    return this.delegate.password(password);
   }
 
+  @Override
   public ConnectionBuilder shardingKey(ShardingKey shardingKey) {
-    return delegate.shardingKey(shardingKey);
+    return this.delegate.shardingKey(shardingKey);
   }
 
+  @Override
   public ConnectionBuilder superShardingKey(ShardingKey superShardingKey) {
-    return delegate.superShardingKey(superShardingKey);
+    return this.delegate.superShardingKey(superShardingKey);
   }
 
+  @Override
   public Connection build() throws SQLException {
     var event = new JdbcObjectEvent();
     event.operationObject = "ConnectionBuilder";
     event.operationName = "build";
     try {
-      Connection connection = delegate.build();
+      Connection connection = this.delegate.build();
       return new JfrConnection(connection);
     } finally {
       event.end();
