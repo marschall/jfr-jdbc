@@ -1,3 +1,8 @@
+JFR JDBC
+========
+
+A JDBC driver that wraps an other JDBC driver and generates JFR events.
+
 Caveats
 -------
 - does not work with Oracle explicit statement caching
