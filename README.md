@@ -12,6 +12,14 @@ Simply wrap your `DataSource` with a `JfrDataSource`
 new JfrDataSource(dataSource)
 ```
 
+Implementation/Overhead
+-----------------------
+
+The implementation is based around wrapper objects.
+
+* no reflection
+* no string concatenation
+
 Caveats
 -------
 - does not work with Oracle explicit statement caching
