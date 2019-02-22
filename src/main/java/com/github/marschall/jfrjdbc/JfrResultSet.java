@@ -27,8 +27,10 @@ import java.util.Objects;
 class JfrResultSet implements ResultSet {
 
   final ResultSet delegate;
+  private final Statement parent;
 
-  JfrResultSet(ResultSet delegate) {
+  JfrResultSet(Statement parent, ResultSet delegate) {
+    this.parent = parent;
     Objects.requireNonNull(delegate, "delegate");
     this.delegate = delegate;
   }
@@ -627,7 +629,14 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public Statement getStatement() throws SQLException {
-    return this.delegate.getStatement();
+    Statement statement = this.delegate.getStatement();
+    if (statement == null) {
+      // allowed for DatabaseMetaData
+      return null;
+    } else {
+      // REVIEW may not be correct for DatabaseMetaData
+      return this.parent;
+    }
   }
 
   @Override

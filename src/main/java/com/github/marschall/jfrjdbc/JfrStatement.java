@@ -10,9 +10,12 @@ import java.util.Objects;
 class JfrStatement implements Statement {
 
   private final Statement delegate;
+  private final Connection parent;
 
-  JfrStatement(Statement delegate) {
+  JfrStatement(Connection parent, Statement delegate) {
+    Objects.requireNonNull(parent, "parent");
     Objects.requireNonNull(delegate, "delegate");
+    this.parent = parent;
     this.delegate = delegate;
   }
 
@@ -151,7 +154,7 @@ class JfrStatement implements Statement {
 
   @Override
   public Connection getConnection() throws SQLException {
-    return this.delegate.getConnection();
+    return this.parent;
   }
 
   @Override
@@ -161,7 +164,19 @@ class JfrStatement implements Statement {
 
   @Override
   public ResultSet getGeneratedKeys() throws SQLException {
-    return this.delegate.getGeneratedKeys();
+    var objectEvent = new JdbcObjectEvent();
+    objectEvent.operationObject = "Statement";
+    objectEvent.operationName = "getGeneratedKeys";
+
+    objectEvent.begin();
+
+    try {
+      var resultSet = this.delegate.getGeneratedKeys();
+      return new JfrResultSet(this, resultSet);
+    } finally {
+      objectEvent.end();
+      objectEvent.commit();
+    }
   }
 
   @Override
@@ -177,7 +192,7 @@ class JfrStatement implements Statement {
 
     try {
       var resultSet = this.delegate.executeQuery(sql);
-      return new JfrCallResultSet(resultSet, callEvent);
+      return new JfrCallResultSet(this, resultSet, callEvent);
     } finally {
       objectEvent.end();
       objectEvent.commit();

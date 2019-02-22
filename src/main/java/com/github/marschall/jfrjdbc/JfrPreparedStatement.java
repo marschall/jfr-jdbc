@@ -7,6 +7,7 @@ import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.ParameterMetaData;
@@ -31,8 +32,8 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   private boolean closed;
 
-  JfrPreparedStatement(PreparedStatement delegate, JfrCallEvent callEvent) {
-    super(delegate);
+  JfrPreparedStatement(Connection parent, PreparedStatement delegate, JfrCallEvent callEvent) {
+    super(parent, delegate);
     Objects.requireNonNull(delegate, "delegate");
     Objects.requireNonNull(callEvent, "callEvent");
     this.callEvent = callEvent;
@@ -64,7 +65,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     event.begin();
 
     try {
-      return new JfrResultSet(this.delegate.executeQuery());
+      return new JfrResultSet(this, this.delegate.executeQuery());
     } finally {
       event.end();
       event.commit();

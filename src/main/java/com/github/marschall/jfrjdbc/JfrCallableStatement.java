@@ -8,6 +8,7 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.Ref;
@@ -29,8 +30,8 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
 
   private boolean closed;
 
-  JfrCallableStatement(CallableStatement delegate, JfrCallEvent callEvent) {
-    super(delegate, callEvent);
+  JfrCallableStatement(Connection parent, CallableStatement delegate, JfrCallEvent callEvent) {
+    super(parent, delegate, callEvent);
     Objects.requireNonNull(delegate, "delegate");
     Objects.requireNonNull(callEvent, "callEvent");
     this.callEvent = callEvent;

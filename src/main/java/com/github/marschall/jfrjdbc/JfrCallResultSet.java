@@ -2,6 +2,7 @@ package com.github.marschall.jfrjdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 class JfrCallResultSet extends JfrResultSet {
 
@@ -9,8 +10,8 @@ class JfrCallResultSet extends JfrResultSet {
 
   private JfrCallEvent callEvent;
 
-  JfrCallResultSet(ResultSet delegate, JfrCallEvent callEvent) {
-    super(delegate);
+  JfrCallResultSet(Statement parent, ResultSet delegate, JfrCallEvent callEvent) {
+    super(parent, delegate);
     this.callEvent = callEvent;
     this.closed = false;
   }
