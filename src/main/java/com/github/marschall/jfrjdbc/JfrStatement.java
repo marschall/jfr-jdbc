@@ -84,7 +84,16 @@ class JfrStatement implements Statement {
 
   @Override
   public SQLWarning getWarnings() throws SQLException {
-    return this.delegate.getWarnings();
+    var event = new JdbcObjectEvent();
+    event.operationObject = "Statement";
+    event.operationName = "getWarnings";
+    event.begin();
+    try {
+      return this.delegate.getWarnings();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
@@ -109,7 +118,16 @@ class JfrStatement implements Statement {
 
   @Override
   public boolean getMoreResults() throws SQLException {
-    return this.delegate.getMoreResults();
+    var event = new JdbcObjectEvent();
+    event.operationObject = "Statement";
+    event.operationName = "getMoreResults";
+    event.begin();
+    try {
+      return this.delegate.getMoreResults();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
@@ -159,7 +177,16 @@ class JfrStatement implements Statement {
 
   @Override
   public boolean getMoreResults(int current) throws SQLException {
-    return this.delegate.getMoreResults(current);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "Statement";
+    event.operationName = "getMoreResults";
+    event.begin();
+    try {
+      return this.delegate.getMoreResults(current);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
