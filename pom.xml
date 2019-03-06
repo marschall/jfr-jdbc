@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.marschall</groupId>
   <artifactId>jfr-jdbc</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <inceptionYear>2019</inceptionYear>
   <name>JFR JDBC</name>
   <description>A JDBC wrapper that generates JFR events.</description>
