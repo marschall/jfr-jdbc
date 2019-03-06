@@ -162,7 +162,17 @@ class JfrStatement implements Statement {
 
   @Override
   public void addBatch(String sql) throws SQLException {
-    this.delegate.addBatch(sql);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "Statement";
+    event.operationName = "addBatch";
+    event.query = sql;
+    event.begin();
+    try {
+      this.delegate.addBatch(sql);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
