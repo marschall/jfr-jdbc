@@ -12,6 +12,8 @@ Simply wrap your `DataSource` with a `JfrDataSource`
 new JfrDataSource(dataSource)
 ```
 
+The project is a Java module with the name `com.github.marschall.jfr.jdbc`.
+
 Implementation/Overhead
 -----------------------
 
@@ -22,6 +24,7 @@ The implementation is based around wrapper objects.
 
 Caveats
 -------
+
 - does not work with Oracle explicit statement caching
 - does not work with unwrapped objects
 - does not work with implicitly closed objects

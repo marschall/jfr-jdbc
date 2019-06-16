@@ -1,4 +1,4 @@
-package com.github.marschall.jfrjdbc;
+package com.github.marschall.jfr.jdbc;
 
 import jdk.jfr.Category;
 import jdk.jfr.Description;

@@ -1,4 +1,4 @@
-package com.github.marschall.jfrjdbc;
+package com.github.marschall.jfr.jdbc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import com.github.marschall.jfr.jdbc.JfrDataSource;
 
 class JfrDataSourceTest {
 

@@ -1,12 +1,12 @@
-module com.github.marschall.jfrjdbc {
+module com.github.marschall.jfr.jdbc {
 
   requires transitive java.sql;
   requires transitive java.logging;
 
   requires jdk.jfr;
 
-  exports com.github.marschall.jfrjdbc;
-  
-  provides java.sql.Driver with com.github.marschall.jfrjdbc.JfrDriver;
+  exports com.github.marschall.jfr.jdbc;
+
+  provides java.sql.Driver with com.github.marschall.jfr.jdbc.JfrDriver;
 
 }
