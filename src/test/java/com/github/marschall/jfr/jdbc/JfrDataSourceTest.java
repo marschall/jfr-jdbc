@@ -15,8 +15,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import com.github.marschall.jfr.jdbc.JfrDataSource;
-
 class JfrDataSourceTest {
 
   private EmbeddedDatabase database;

@@ -1,13 +1,19 @@
 package com.github.marschall.jfr.jdbc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class JfrDriverTest {
+
+  @BeforeAll
+  static void loadDriver() {
+    org.h2.Driver.load();
+  }
 
   @Test
   void connect() throws SQLException {
