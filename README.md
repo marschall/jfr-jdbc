@@ -1,4 +1,4 @@
-JFR JDBC
+JFR JDBC [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/jfr-jdbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/jfr-jdbc) [![Javadocs](https://www.javadoc.io/badge/com.github.marschall/jfr-jdbc.svg)](https://www.javadoc.io/doc/com.github.marschall/jfr-jdbc)
 ========
 
 A JDBC driver that wraps an other JDBC driver and generates JFR events.
