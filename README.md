@@ -3,6 +3,14 @@ JFR JDBC [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.
 
 A JDBC driver that wraps an other JDBC driver and generates JFR events.
 
+```xml
+<dependency>
+  <groupId>com.github.marschall</groupId>
+  <artifactId>jfr-jdbc</artifactId>
+  <version>0.2.0</version>
+</dependency>
+```
+
 Usage
 -----
 
