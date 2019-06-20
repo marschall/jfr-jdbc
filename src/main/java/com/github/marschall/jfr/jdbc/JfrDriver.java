@@ -9,6 +9,14 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+/**
+ * A driver that wraps a different driver and generates JFR events.
+ * 
+ * <h2>Usage</h2>
+ * To use the driver simply prepend "jfr:" to the JDBC connection URL
+ * for which you want to generate JFR events. For example if you use
+ * "jdbc:jfr:h2:mem:" you will get a connection for "jdbc:h2:mem:"
+ */
 public final class JfrDriver implements Driver {
   
   static {
@@ -28,7 +36,7 @@ public final class JfrDriver implements Driver {
     if (!this.acceptsURL(url)) {
       throw new SQLException("unvalid url: " + url);
     }
-    return DriverManager.getConnection(url.substring(4), info);
+    return DriverManager.getConnection("jdbc:" + url.substring(9), info);
   }
 
   @Override
@@ -36,7 +44,7 @@ public final class JfrDriver implements Driver {
     if (url == null) {
       throw new SQLException();
     }
-    return url.startsWith("jfr:");
+    return url.startsWith("jdbc:jfr:");
   }
 
   @Override
@@ -51,7 +59,7 @@ public final class JfrDriver implements Driver {
 
   @Override
   public int getMinorVersion() {
-    return 1;
+    return 3;
   }
 
   @Override

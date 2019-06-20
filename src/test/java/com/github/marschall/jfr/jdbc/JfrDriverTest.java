@@ -17,7 +17,7 @@ class JfrDriverTest {
 
   @Test
   void connect() throws SQLException {
-    try (var connection = DriverManager.getConnection("jfr:jdbc:h2:mem:");
+    try (var connection = DriverManager.getConnection("jdbc:jfr:h2:mem:");
          var preparedStatement = connection.prepareStatement("SELECT 1");
          var resultSet = preparedStatement.executeQuery()) {
       while (resultSet.next()) {

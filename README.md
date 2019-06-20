@@ -20,6 +20,8 @@ Simply wrap your `DataSource` with a `JfrDataSource`
 new JfrDataSource(dataSource)
 ```
 
+If you use `Driver` simply prefix your JDBC URL with `"jfr:"` for example use `"jdbc:jfr:h2:mem:"` instead of `"jdbc:h2:mem:"`.
+
 The project is a Java module with the name `com.github.marschall.jfr.jdbc`.
 
 Implementation/Overhead
