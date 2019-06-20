@@ -367,22 +367,79 @@ final class JfrConnection implements Connection {
 
   @Override
   public Savepoint setSavepoint() throws SQLException {
-    return this.delegate.setSavepoint();
+    var safepointEvent = new JdbcSavepointEvent();
+    safepointEvent.operationName = "setSavepoint";
+    safepointEvent.begin();
+    Savepoint driverSavepoint;
+    try {
+      driverSavepoint = this.delegate.setSavepoint();
+      safepointEvent.savepointId = driverSavepoint.getSavepointId();
+    } finally {
+      safepointEvent.end();
+      safepointEvent.commit();
+    }
+    return new JfrUnNamedSavepoint(driverSavepoint);
   }
 
   @Override
   public Savepoint setSavepoint(String name) throws SQLException {
-    return this.delegate.setSavepoint(name);
+    var safepointEvent = new JdbcSavepointEvent();
+    safepointEvent.savepointName = name;
+    safepointEvent.operationName = "setSavepoint";
+    safepointEvent.begin();
+    try {
+      return new JfrNamedSavepoint(this.delegate.setSavepoint(name));
+    } finally {
+      safepointEvent.end();
+      safepointEvent.commit();
+    }
+  }
+  
+  private static JdbcSavepointEvent newSafepointEvent(String operationName, JfrSavepoint savepoint) throws SQLException {
+    var safepointEvent = new JdbcSavepointEvent();
+    safepointEvent.operationName = operationName;
+    if (savepoint instanceof JfrNamedSavepoint) {
+      safepointEvent.savepointName = savepoint.getSavepointName();
+    } else if (savepoint instanceof JfrUnNamedSavepoint) {
+      safepointEvent.savepointId = savepoint.getSavepointId();
+    }
+    return safepointEvent;
   }
 
   @Override
   public void rollback(Savepoint savepoint) throws SQLException {
-    this.delegate.rollback(savepoint);
+    if (savepoint instanceof JfrSavepoint) {
+      var safepointEvent = newSafepointEvent("rollback", (JfrSavepoint) savepoint);
+      
+      safepointEvent.begin();
+      try {
+        this.delegate.rollback(((JfrSavepoint) savepoint).getDelegate());
+      } finally {
+        safepointEvent.end();
+        safepointEvent.commit();
+      }
+    } else {
+      this.delegate.rollback(savepoint);
+    }
   }
 
   @Override
   public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-    this.delegate.releaseSavepoint(savepoint);
+    if (savepoint instanceof JfrSavepoint) {
+      var safepointEvent = newSafepointEvent("releaseSavepoint", (JfrSavepoint) savepoint);
+
+      safepointEvent.begin();
+      try {
+        this.delegate.releaseSavepoint(((JfrSavepoint) savepoint).getDelegate());
+      } finally {
+        safepointEvent.end();
+        safepointEvent.commit();
+      }
+    } else {
+      // there is no way to find out what kind of Safepoint we are and either of them may throw SQLException
+      // so we simply do not generate an even tin this case
+      this.delegate.releaseSavepoint(savepoint);
+    }
   }
 
   @Override
