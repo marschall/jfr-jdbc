@@ -41,6 +41,15 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     this.closed = false;
   }
 
+  private JdbcObjectEvent newObjectEvent(String operationName) {
+    var event = new JdbcObjectEvent();
+    event.operationObject = "PreparedStatement";
+    event.operationName = operationName;
+    event.query = this.callEvent.query;
+    event.objectId = this.objectId;
+    return event;
+  }
+
   @Override
   public void close() throws SQLException {
     if (!this.closed) {
@@ -49,14 +58,6 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
       this.closed = true;
     }
     this.delegate.close();
-  }
-
-  private JdbcObjectEvent newObjectEvent(String operationName) {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "PreparedStatement";
-    event.operationName = operationName;
-    event.query = this.callEvent.query;
-    return event;
   }
 
   @Override

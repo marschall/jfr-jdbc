@@ -11,12 +11,19 @@ class JfrStatement implements Statement {
 
   private final Statement delegate;
   private final Connection parent;
+  final long objectId;
 
   JfrStatement(Connection parent, Statement delegate) {
     Objects.requireNonNull(parent, "parent");
     Objects.requireNonNull(delegate, "delegate");
     this.parent = parent;
     this.delegate = delegate;
+    this.objectId = ObjectIdGenerator.nextId();
+  }
+
+  private JdbcObjectEvent newObjectEvent(String operationName) {
+    // TODO save last SQL
+    return this.newObjectEvent(operationName, null);
   }
 
   private JdbcObjectEvent newObjectEvent(String operationName, String query) {
@@ -24,6 +31,7 @@ class JfrStatement implements Statement {
     event.operationObject = "PreparedStatement";
     event.operationName = operationName;
     event.query = query;
+    event.objectId = this.objectId;
     return event;
   }
 
@@ -84,9 +92,7 @@ class JfrStatement implements Statement {
 
   @Override
   public SQLWarning getWarnings() throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Statement";
-    event.operationName = "getWarnings";
+    var event = this.newObjectEvent("getWarnings");
     event.begin();
     try {
       return this.delegate.getWarnings();
@@ -118,9 +124,7 @@ class JfrStatement implements Statement {
 
   @Override
   public boolean getMoreResults() throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Statement";
-    event.operationName = "getMoreResults";
+    var event = this.newObjectEvent("getMoreResults");
     event.begin();
     try {
       return this.delegate.getMoreResults();
@@ -162,10 +166,7 @@ class JfrStatement implements Statement {
 
   @Override
   public void addBatch(String sql) throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Statement";
-    event.operationName = "addBatch";
-    event.query = sql;
+    var event = this.newObjectEvent("addBatch", sql);
     event.begin();
     try {
       this.delegate.addBatch(sql);
@@ -187,9 +188,7 @@ class JfrStatement implements Statement {
 
   @Override
   public boolean getMoreResults(int current) throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Statement";
-    event.operationName = "getMoreResults";
+    var event = this.newObjectEvent("getMoreResults");
     event.begin();
     try {
       return this.delegate.getMoreResults(current);
@@ -201,9 +200,7 @@ class JfrStatement implements Statement {
 
   @Override
   public ResultSet getGeneratedKeys() throws SQLException {
-    var objectEvent = new JdbcObjectEvent();
-    objectEvent.operationObject = "Statement";
-    objectEvent.operationName = "getGeneratedKeys";
+    var objectEvent = this.newObjectEvent("getGeneratedKeys");
 
     objectEvent.begin();
 
@@ -219,10 +216,7 @@ class JfrStatement implements Statement {
   @Override
   public ResultSet executeQuery(String sql) throws SQLException {
     var callEvent = new JfrCallEvent(sql);
-    var objectEvent = new JdbcObjectEvent();
-    objectEvent.operationObject = "Statement";
-    objectEvent.operationName = "executeQuery";
-    objectEvent.query = sql;
+    var objectEvent = this.newObjectEvent("executeQuery", sql);
 
     callEvent.begin();
     objectEvent.begin();

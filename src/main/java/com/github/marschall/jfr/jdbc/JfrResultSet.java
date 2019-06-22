@@ -28,11 +28,22 @@ class JfrResultSet implements ResultSet {
 
   final ResultSet delegate;
   private final Statement parent;
+  private final long objectId;
+
 
   JfrResultSet(Statement parent, ResultSet delegate) {
     this.parent = parent;
     Objects.requireNonNull(delegate, "delegate");
     this.delegate = delegate;
+    this.objectId = ObjectIdGenerator.nextId();
+  }
+
+  private JdbcObjectEvent newObjectEvent(String operationName) {
+    var event = new JdbcObjectEvent();
+    event.operationObject = "ResultSet";
+    event.operationName = operationName;
+    event.objectId = this.objectId;
+    return event;
   }
 
   @Override
@@ -52,9 +63,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean next() throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "ResultSet";
-    event.operationName = "next";
+    var event = this.newObjectEvent("next");
     event.begin();
     try {
       return this.delegate.next();
@@ -250,9 +259,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public ResultSetMetaData getMetaData() throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "ResultSet";
-    event.operationName = "getMetaData";
+    var event = this.newObjectEvent("getMetaData");
     event.begin();
     try {
       return this.delegate.getMetaData();
@@ -344,9 +351,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean absolute(int row) throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "ResultSet";
-    event.operationName = "absolute";
+    var event = this.newObjectEvent("absolute");
     event.begin();
     try {
       return this.delegate.absolute(row);
@@ -358,9 +363,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean relative(int rows) throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "ResultSet";
-    event.operationName = "relative";
+    var event = this.newObjectEvent("relative");
     event.begin();
     try {
       return this.delegate.relative(rows);

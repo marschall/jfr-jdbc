@@ -26,4 +26,7 @@ class JdbcObjectEvent extends Event {
   @Description("The SQL query string")
   String query;
 
+  @ObjectId
+  long objectId;
+
 }
