@@ -328,12 +328,26 @@ class JfrStatement implements Statement {
 
   @Override
   public int[] executeBatch() throws SQLException {
-    return this.delegate.executeBatch();
+    var event = this.newObjectEvent("executeBatch");
+    event.begin();
+    try {
+      return this.delegate.executeBatch();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
   public long[] executeLargeBatch() throws SQLException {
-    return this.delegate.executeLargeBatch();
+    var event = this.newObjectEvent("executeLargeBatch");
+    event.begin();
+    try {
+      return this.delegate.executeLargeBatch();
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override

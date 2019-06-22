@@ -310,9 +310,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public ParameterMetaData getParameterMetaData() throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "PreparedStatement";
-    event.operationName = "getParameterMetaData";
+    var event = this.newObjectEvent("getParameterMetaData");
     event.begin();
     try {
       return this.delegate.getParameterMetaData();
