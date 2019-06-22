@@ -344,12 +344,30 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean absolute(int row) throws SQLException {
-    return this.delegate.absolute(row);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "ResultSet";
+    event.operationName = "absolute";
+    event.begin();
+    try {
+      return this.delegate.absolute(row);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
   public boolean relative(int rows) throws SQLException {
-    return this.delegate.relative(rows);
+    var event = new JdbcObjectEvent();
+    event.operationObject = "ResultSet";
+    event.operationName = "relative";
+    event.begin();
+    try {
+      return this.delegate.relative(rows);
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
