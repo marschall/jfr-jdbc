@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 /**
- * A data source that wraps an other one and generates Fligt Recourder events.
+ * A data source that wraps an other one and generates Flight Recorder events.
  */
 public final class JfrDataSource implements DataSource {
 
