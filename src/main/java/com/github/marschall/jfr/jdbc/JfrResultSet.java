@@ -29,13 +29,18 @@ class JfrResultSet implements ResultSet {
   final ResultSet delegate;
   private final Statement parent;
   private final long objectId;
+  private boolean closed;
+  private JdbcCallEvent callEvent;
+  private long rowCount;
 
 
-  JfrResultSet(Statement parent, ResultSet delegate) {
+  JfrResultSet(Statement parent, ResultSet delegate, JdbcCallEvent callEvent) {
     this.parent = parent;
     Objects.requireNonNull(delegate, "delegate");
     this.delegate = delegate;
     this.objectId = ObjectIdGenerator.nextId();
+    this.callEvent = callEvent;
+    this.closed = false;
   }
 
   private JdbcObjectEvent newObjectEvent(String operationName) {
@@ -48,6 +53,14 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public void close() throws SQLException {
+    if (!this.closed) {
+      this.callEvent.rowCount = this.rowCount;
+      this.callEvent.end();
+      this.callEvent.commit();
+      this.callEvent.closed = true;
+      this.callEvent = null;
+      this.closed = true;
+    }
     this.delegate.close();
   }
 
@@ -66,7 +79,11 @@ class JfrResultSet implements ResultSet {
     var event = this.newObjectEvent("next");
     event.begin();
     try {
-      return this.delegate.next();
+      boolean next = this.delegate.next();
+      if (next) {
+        this.rowCount += 1;
+      }
+      return next;
     } finally {
       event.end();
       event.commit();
@@ -336,11 +353,13 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean first() throws SQLException {
+    this.rowCount = 0;
     return this.delegate.first();
   }
 
   @Override
   public boolean last() throws SQLException {
+    this.rowCount = 0;
     return this.delegate.last();
   }
 
@@ -354,7 +373,11 @@ class JfrResultSet implements ResultSet {
     var event = this.newObjectEvent("absolute");
     event.begin();
     try {
-      return this.delegate.absolute(row);
+      boolean moved = this.delegate.absolute(row);
+      if (moved && row >= 1) {
+        this.rowCount += 1L;
+      }
+      return moved;
     } finally {
       event.end();
       event.commit();

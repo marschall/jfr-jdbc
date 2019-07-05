@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.NClob;
 import java.sql.Ref;
+import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLType;
@@ -26,27 +27,33 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
 
   private final CallableStatement delegate;
 
-  private final JfrCallEvent callEvent;
-
-  private boolean closed;
-
-  JfrCallableStatement(Connection parent, CallableStatement delegate, JfrCallEvent callEvent) {
+  JfrCallableStatement(Connection parent, CallableStatement delegate, JdbcCallEvent callEvent) {
     super(parent, delegate, callEvent);
     Objects.requireNonNull(delegate, "delegate");
     Objects.requireNonNull(callEvent, "callEvent");
-    this.callEvent = callEvent;
     this.delegate = delegate;
-    this.closed = false;
   }
 
+  private JdbcObjectEvent newObjectEvent(String operationName) {
+    var event = new JdbcObjectEvent();
+    event.operationObject = "CallableStatement";
+    event.operationName = operationName;
+    event.query = this.callEvent.query;
+    event.objectId = this.objectId;
+    return event;
+  }
+  
   @Override
-  public void close() throws SQLException {
-    if (!this.closed) {
-      this.callEvent.end();
-      this.callEvent.commit();
-      this.closed = true;
+  public ResultSet getResultSet() throws SQLException {
+    var event = this.newObjectEvent("executeQuery");
+    event.begin();
+
+    try {
+      return new JfrCallResultSet(this, this.delegate.executeQuery(), this.callEvent);
+    } finally {
+      event.end();
+      event.commit();
     }
-    this.delegate.close();
   }
 
   @Override

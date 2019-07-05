@@ -28,11 +28,11 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   private final PreparedStatement delegate;
 
-  private final JfrCallEvent callEvent;
+  JdbcCallEvent callEvent;
 
   private boolean closed;
 
-  JfrPreparedStatement(Connection parent, PreparedStatement delegate, JfrCallEvent callEvent) {
+  JfrPreparedStatement(Connection parent, PreparedStatement delegate, JdbcCallEvent callEvent) {
     super(parent, delegate);
     Objects.requireNonNull(delegate, "delegate");
     Objects.requireNonNull(callEvent, "callEvent");
@@ -52,9 +52,10 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public void close() throws SQLException {
-    if (!this.closed) {
+    if (!this.closed && !this.callEvent.closed) {
       this.callEvent.end();
       this.callEvent.commit();
+      this.callEvent.closed = true;
       this.closed = true;
     }
     this.delegate.close();
@@ -66,7 +67,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     event.begin();
 
     try {
-      return new JfrResultSet(this, this.delegate.executeQuery());
+      return new JfrCallResultSet(this, this.delegate.executeQuery(), this.callEvent);
     } finally {
       event.end();
       event.commit();
@@ -226,6 +227,13 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public void clearParameters() throws SQLException {
+    if (!this.closed && !this.callEvent.closed) {
+      this.callEvent.end();
+      this.callEvent.commit();
+      this.callEvent.closed = true;
+      
+      this.callEvent = new JdbcCallEvent(this.callEvent.query);
+    }
     this.delegate.clearParameters();
   }
 

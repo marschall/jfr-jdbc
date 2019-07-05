@@ -200,13 +200,15 @@ class JfrStatement implements Statement {
 
   @Override
   public ResultSet getGeneratedKeys() throws SQLException {
+    var callEvent = new JdbcCallEvent("getGeneratedKeys");
     var objectEvent = this.newObjectEvent("getGeneratedKeys");
 
+    callEvent.begin();
     objectEvent.begin();
 
     try {
       var resultSet = this.delegate.getGeneratedKeys();
-      return new JfrResultSet(this, resultSet);
+      return new JfrResultSet(this, resultSet, callEvent);
     } finally {
       objectEvent.end();
       objectEvent.commit();
@@ -215,7 +217,7 @@ class JfrStatement implements Statement {
 
   @Override
   public ResultSet executeQuery(String sql) throws SQLException {
-    var callEvent = new JfrCallEvent(sql);
+    var callEvent = new JdbcCallEvent(sql);
     var objectEvent = this.newObjectEvent("executeQuery", sql);
 
     callEvent.begin();

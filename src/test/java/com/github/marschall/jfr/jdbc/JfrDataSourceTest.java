@@ -3,6 +3,9 @@ package com.github.marschall.jfr.jdbc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.Map;
 
@@ -44,6 +47,33 @@ class JfrDataSourceTest {
   void selectWithBindParameters() {
     Integer result = this.jdbcTemplate.queryForObject("SELECT 1 FROM dual WHERE 1 < ?", Integer.class, 2);
     assertEquals(Integer.valueOf(1), result);
+  }
+  
+  @Test
+  void clearParameters() {
+    Integer computedSum = this.jdbcTemplate.execute(connection -> connection.prepareStatement("SELECT X FROM SYSTEM_RANGE(1, ?)"),
+        (PreparedStatement preparedStatement) -> {
+          preparedStatement.setInt(1, 3);
+          int sum = 0;
+          try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+              sum += resultSet.getInt(1);
+            }
+          }
+
+          preparedStatement.clearParameters();
+
+          preparedStatement.setInt(1, 4);
+          try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+              sum += resultSet.getInt(1);
+            }
+          }
+
+          return sum;
+        });
+    
+    assertEquals(Integer.valueOf(16), computedSum);
   }
 
   @Test
