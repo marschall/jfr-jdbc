@@ -59,7 +59,7 @@ final class JfrConnection implements Connection {
     event.operationName = operationName;
     return event;
   }
-  
+
   private static JdbcSavepointEvent newSafepointEvent(String operationName, JfrSavepoint savepoint) throws SQLException {
     var safepointEvent = new JdbcSavepointEvent();
     safepointEvent.operationName = operationName;
@@ -413,7 +413,7 @@ final class JfrConnection implements Connection {
   public void rollback(Savepoint savepoint) throws SQLException {
     if (savepoint instanceof JfrSavepoint) {
       var safepointEvent = newSafepointEvent("rollback", (JfrSavepoint) savepoint);
-      
+
       safepointEvent.begin();
       try {
         this.delegate.rollback(((JfrSavepoint) savepoint).getDelegate());
