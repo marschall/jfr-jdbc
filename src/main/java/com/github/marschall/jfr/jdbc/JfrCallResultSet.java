@@ -1,7 +1,6 @@
 package com.github.marschall.jfr.jdbc;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 class JfrCallResultSet extends JfrResultSet {
