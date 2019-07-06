@@ -34,8 +34,8 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
     this.delegate = delegate;
   }
 
-  private JdbcObjectEvent newObjectEvent(String operationName) {
-    var event = new JdbcObjectEvent();
+  private JdbcOperationEvent newOperationEvent(String operationName) {
+    var event = new JdbcOperationEvent();
     event.operationObject = "CallableStatement";
     event.operationName = operationName;
     event.query = this.callEvent.query;
@@ -45,7 +45,7 @@ final class JfrCallableStatement extends JfrPreparedStatement implements Callabl
   
   @Override
   public ResultSet getResultSet() throws SQLException {
-    var event = this.newObjectEvent("executeQuery");
+    var event = this.newOperationEvent("executeQuery");
     event.begin();
 
     try {

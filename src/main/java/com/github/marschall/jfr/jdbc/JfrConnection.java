@@ -30,33 +30,27 @@ final class JfrConnection implements Connection {
     this.delegate = delegate;
   }
 
-  private static JdbcObjectEvent newCreateStatementEvent() {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Connection";
-    event.operationName = "createStatement";
-    return event;
+  private static JdbcOperationEvent newCreateStatementEvent() {
+    return newConnectionEvent("createStatement");
   }
 
-  private static JdbcObjectEvent newPrepareStatementEvent(String sql) {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Connection";
-    event.operationName = "prepareStatement";
-    event.query = sql;
-    return event;
+  private static JdbcOperationEvent newPrepareStatementEvent(String sql) {
+    return newConnectionEvent("prepareStatement", sql);
   }
 
-  private static JdbcObjectEvent newPrepareCallEvent(String sql) {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "Connection";
-    event.operationName = "prepareCall";
-    event.query = sql;
-    return event;
+  private static JdbcOperationEvent newPrepareCallEvent(String sql) {
+    return newConnectionEvent("prepareCall", sql);
+  }
+  
+  private static JdbcOperationEvent newConnectionEvent(String operationName) {
+    return newConnectionEvent(operationName, null);
   }
 
-  private static JdbcObjectEvent newConnectionEvent(String operationName) {
-    var event = new JdbcObjectEvent();
+  private static JdbcOperationEvent newConnectionEvent(String operationName, String sql) {
+    var event = new JdbcOperationEvent();
     event.operationObject = "Connection";
     event.operationName = operationName;
+    event.query = sql;
     return event;
   }
 
@@ -266,8 +260,7 @@ final class JfrConnection implements Connection {
 
   @Override
   public String nativeSQL(String sql) throws SQLException {
-    var event = newConnectionEvent("nativeSQL");
-    event.query = sql;
+    var event = newConnectionEvent("nativeSQL", sql);
     event.begin();
     try {
       return this.delegate.nativeSQL(sql);

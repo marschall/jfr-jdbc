@@ -35,7 +35,7 @@ public final class JfrDataSource implements DataSource {
 
   @Override
   public Connection getConnection() throws SQLException {
-    var event = new JdbcObjectEvent();
+    var event = new JdbcOperationEvent();
     event.operationObject = "DataSource";
     event.operationName = "getConnection";
     try {
@@ -49,7 +49,7 @@ public final class JfrDataSource implements DataSource {
 
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
-    var event = new JdbcObjectEvent();
+    var event = new JdbcOperationEvent();
     event.operationObject = "DataSource";
     event.operationName = "getConnection";
     try {

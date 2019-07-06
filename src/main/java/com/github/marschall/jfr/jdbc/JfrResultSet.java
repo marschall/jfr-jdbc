@@ -43,8 +43,8 @@ class JfrResultSet implements ResultSet {
     this.closed = false;
   }
 
-  private JdbcObjectEvent newObjectEvent(String operationName) {
-    var event = new JdbcObjectEvent();
+  private JdbcOperationEvent newOperationEvent(String operationName) {
+    var event = new JdbcOperationEvent();
     event.operationObject = "ResultSet";
     event.operationName = operationName;
     event.objectId = this.objectId;
@@ -76,7 +76,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean next() throws SQLException {
-    var event = this.newObjectEvent("next");
+    var event = this.newOperationEvent("next");
     event.begin();
     try {
       boolean next = this.delegate.next();
@@ -276,7 +276,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public ResultSetMetaData getMetaData() throws SQLException {
-    var event = this.newObjectEvent("getMetaData");
+    var event = this.newOperationEvent("getMetaData");
     event.begin();
     try {
       return this.delegate.getMetaData();
@@ -370,7 +370,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean absolute(int row) throws SQLException {
-    var event = this.newObjectEvent("absolute");
+    var event = this.newOperationEvent("absolute");
     event.begin();
     try {
       boolean moved = this.delegate.absolute(row);
@@ -386,7 +386,7 @@ class JfrResultSet implements ResultSet {
 
   @Override
   public boolean relative(int rows) throws SQLException {
-    var event = this.newObjectEvent("relative");
+    var event = this.newOperationEvent("relative");
     event.begin();
     try {
       return this.delegate.relative(rows);
