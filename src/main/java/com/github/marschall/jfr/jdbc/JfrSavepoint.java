@@ -4,13 +4,13 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 
 abstract class JfrSavepoint implements Savepoint {
-  
+
   private final Savepoint delegate;
 
   JfrSavepoint(Savepoint delegate) {
     this.delegate = delegate;
   }
-  
+
   Savepoint getDelegate() {
     return this.delegate;
   }
@@ -32,13 +32,13 @@ final class JfrUnNamedSavepoint extends JfrSavepoint {
   JfrUnNamedSavepoint(Savepoint delegate) {
     super(delegate);
   }
-  
+
 }
 
 final class JfrNamedSavepoint extends JfrSavepoint {
-  
+
   JfrNamedSavepoint(Savepoint delegate) {
     super(delegate);
   }
-  
+
 }

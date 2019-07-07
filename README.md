@@ -38,3 +38,6 @@ Caveats
 - does not work with Oracle explicit statement caching
 - does not work with unwrapped objects
 - does not work with implicitly closed objects
+- does not work with cached statements provided by a connection pool
+- only accessing the first warning is instrumented, accessing the following ones is not
+- reconstructing the JDBC call time and row count is not super reliable especially in the case for more exotic row iteration
