@@ -5,7 +5,6 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -27,6 +26,9 @@ public final class JfrDriver implements Driver {
     }
   }
 
+  /**
+   * Default constructor, supposed to be called by JDBC, not user code.
+   */
   public JfrDriver() {
     super();
   }
@@ -59,7 +61,7 @@ public final class JfrDriver implements Driver {
 
   @Override
   public int getMinorVersion() {
-    return 3;
+    return 4;
   }
 
   @Override
@@ -68,8 +70,10 @@ public final class JfrDriver implements Driver {
   }
 
   @Override
-  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-    return Logger.getLogger("com.github.marschall.jfrjdbc");
+  public Logger getParentLogger() {
+    // REVIEW inconsistent with JfrDataSource, but hard to keep consistent
+    // as don't know what we will delegate to
+    return Logger.getLogger("com.github.marschall.jfr.jdbc");
   }
 
 }

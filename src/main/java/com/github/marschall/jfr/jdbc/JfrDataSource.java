@@ -18,6 +18,11 @@ public final class JfrDataSource implements DataSource {
 
   private final DataSource delegate;
 
+  /**
+   * Constructs a new JFR data source.
+   * 
+   * @param delegate the actual data source to delegate to, not {@code null}
+   */
   public JfrDataSource(DataSource delegate) {
     Objects.requireNonNull(delegate, "delegate");
     this.delegate = delegate;
