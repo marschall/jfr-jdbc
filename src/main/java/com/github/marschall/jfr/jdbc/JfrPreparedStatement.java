@@ -28,11 +28,11 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   private final PreparedStatement delegate;
 
-  private final JfrCallEvent callEvent;
+  JdbcCallEvent callEvent;
 
   private boolean closed;
 
-  JfrPreparedStatement(Connection parent, PreparedStatement delegate, JfrCallEvent callEvent) {
+  JfrPreparedStatement(Connection parent, PreparedStatement delegate, JdbcCallEvent callEvent) {
     super(parent, delegate);
     Objects.requireNonNull(delegate, "delegate");
     Objects.requireNonNull(callEvent, "callEvent");
@@ -41,31 +41,33 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
     this.closed = false;
   }
 
+  private JdbcOperationEvent newOperationEvent(String operationName) {
+    var event = new JdbcOperationEvent();
+    event.operationObject = "PreparedStatement";
+    event.operationName = operationName;
+    event.query = this.callEvent.query;
+    event.objectId = this.objectId;
+    return event;
+  }
+
   @Override
   public void close() throws SQLException {
-    if (!this.closed) {
+    if (!this.closed && !this.callEvent.closed) {
       this.callEvent.end();
       this.callEvent.commit();
+      this.callEvent.closed = true;
       this.closed = true;
     }
     this.delegate.close();
   }
 
-  private JdbcObjectEvent newObjectEvent(String operationName) {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "PreparedStatement";
-    event.operationName = operationName;
-    event.query = this.callEvent.query;
-    return event;
-  }
-
   @Override
   public ResultSet executeQuery() throws SQLException {
-    var event = this.newObjectEvent("executeQuery");
+    var event = this.newOperationEvent("executeQuery");
     event.begin();
 
     try {
-      return new JfrResultSet(this, this.delegate.executeQuery());
+      return new JfrCallResultSet(this, this.delegate.executeQuery(), this.callEvent);
     } finally {
       event.end();
       event.commit();
@@ -74,7 +76,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public int executeUpdate() throws SQLException {
-    var event = this.newObjectEvent("executeUpdate");
+    var event = this.newOperationEvent("executeUpdate");
     event.begin();
 
     try {
@@ -87,7 +89,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public boolean execute() throws SQLException {
-    var event = this.newObjectEvent("execute");
+    var event = this.newOperationEvent("execute");
     event.begin();
 
     try {
@@ -100,7 +102,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public long executeLargeUpdate() throws SQLException {
-    var event = this.newObjectEvent("executeLargeUpdate");
+    var event = this.newOperationEvent("executeLargeUpdate");
     event.begin();
 
     try {
@@ -113,7 +115,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public int[] executeBatch() throws SQLException {
-    var event = this.newObjectEvent("executeBatch");
+    var event = this.newOperationEvent("executeBatch");
     event.begin();
 
     try {
@@ -126,7 +128,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public long[] executeLargeBatch() throws SQLException {
-    var event = this.newObjectEvent("executeLargeBatch");
+    var event = this.newOperationEvent("executeLargeBatch");
     event.begin();
 
     try {
@@ -225,6 +227,13 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public void clearParameters() throws SQLException {
+    if (!this.closed && !this.callEvent.closed) {
+      this.callEvent.end();
+      this.callEvent.commit();
+      this.callEvent.closed = true;
+      
+      this.callEvent = new JdbcCallEvent(this.callEvent.query);
+    }
     this.delegate.clearParameters();
   }
 
@@ -270,7 +279,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public ResultSetMetaData getMetaData() throws SQLException {
-    var event = new JdbcObjectEvent();
+    var event = new JdbcOperationEvent();
     event.operationObject = "PreparedStatement";
     event.operationName = "getMetaData";
     event.begin();
@@ -309,9 +318,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
 
   @Override
   public ParameterMetaData getParameterMetaData() throws SQLException {
-    var event = new JdbcObjectEvent();
-    event.operationObject = "PreparedStatement";
-    event.operationName = "getParameterMetaData";
+    var event = this.newOperationEvent("getParameterMetaData");
     event.begin();
     try {
       return this.delegate.getParameterMetaData();

@@ -5,21 +5,28 @@ import jdk.jfr.Description;
 import jdk.jfr.Event;
 import jdk.jfr.Label;
 
-@Label("JDBC Object")
-@Description("A JDBC Object")
+@Label("JDBC Operation")
+@Description("A JDBC Operation")
 @Category("JDBC")
 class JdbcOperationEvent extends Event {
 
-  @Label("Type")
-  @Description("The object type")
-  private String type;
-
-  String getType() {
-    return this.type;
+  JdbcOperationEvent() {
+    super();
   }
 
-  void setType(String type) {
-    this.type = type;
-  }
+  @Label("Object")
+  @Description("The object type executing the operation")
+  String operationObject;
+
+  @Label("Operation Name")
+  @Description("The name of the JDBC operation")
+  String operationName;
+
+  @Label("Query")
+  @Description("The SQL query string")
+  String query;
+
+  @ObjectId
+  long objectId;
 
 }

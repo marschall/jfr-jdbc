@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 /**
- * A data source that wraps an other one and generates Fligt Recourder events.
+ * A data source that wraps an other one and generates Flight Recorder events.
  */
 public final class JfrDataSource implements DataSource {
 
@@ -35,7 +35,7 @@ public final class JfrDataSource implements DataSource {
 
   @Override
   public Connection getConnection() throws SQLException {
-    var event = new JdbcObjectEvent();
+    var event = new JdbcOperationEvent();
     event.operationObject = "DataSource";
     event.operationName = "getConnection";
     try {
@@ -49,7 +49,7 @@ public final class JfrDataSource implements DataSource {
 
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
-    var event = new JdbcObjectEvent();
+    var event = new JdbcOperationEvent();
     event.operationObject = "DataSource";
     event.operationName = "getConnection";
     try {

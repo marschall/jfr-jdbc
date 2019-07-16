@@ -37,7 +37,7 @@ final class JfrConnectionBuilder implements ConnectionBuilder {
 
   @Override
   public Connection build() throws SQLException {
-    var event = new JdbcObjectEvent();
+    var event = new JdbcOperationEvent();
     event.operationObject = "ConnectionBuilder";
     event.operationName = "build";
     try {
