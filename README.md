@@ -1,4 +1,4 @@
-JFR JDBC [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/jfr-jdbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/jfr-jdbc) [![Javadocs](https://www.javadoc.io/badge/com.github.marschall/jfr-jdbc.svg)](https://www.javadoc.io/doc/com.github.marschall/jfr-jdbc)
+JFR JDBC [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/jfr-jdbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.marschall/jfr-jdbc) [![Javadocs](https://www.javadoc.io/badge/com.github.marschall/jfr-jdbc.svg)](https://www.javadoc.io/doc/com.github.marschall/jfr-jdbc) [![Build Status](https://travis-ci.org/marschall/jfr-jdbc.svg?branch=master)](https://travis-ci.org/marschall/jfr-jdbc)
 ========
 
 A JDBC driver that wraps an other JDBC driver and generates JFR events.
@@ -7,7 +7,7 @@ A JDBC driver that wraps an other JDBC driver and generates JFR events.
 <dependency>
   <groupId>com.github.marschall</groupId>
   <artifactId>jfr-jdbc</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 
