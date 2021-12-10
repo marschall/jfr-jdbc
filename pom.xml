@@ -232,7 +232,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <junit.jupiter.version>5.5.2</junit.jupiter.version>
     <spring.version>5.2.1.RELEASE</spring.version>
-    <log4j.version>2.13.3</log4j.version>
+    <log4j.version>2.15.0</log4j.version>
   </properties>
 
 </project>
