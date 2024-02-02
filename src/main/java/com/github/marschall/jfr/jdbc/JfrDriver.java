@@ -36,9 +36,17 @@ public final class JfrDriver implements Driver {
   @Override
   public Connection connect(String url, Properties info) throws SQLException {
     if (!this.acceptsURL(url)) {
-      throw new SQLException("unvalid url: " + url);
+      throw new SQLException("invalid url: " + url);
     }
-    return DriverManager.getConnection("jdbc:" + url.substring(9), info);
+    var event = new JdbcOperationEvent();
+    event.operationObject = "DataSource";
+    event.operationName = "connect";
+    try {
+      return new JfrConnection(DriverManager.getConnection("jdbc:" + url.substring(9), info));
+    } finally {
+      event.end();
+      event.commit();
+    }
   }
 
   @Override
