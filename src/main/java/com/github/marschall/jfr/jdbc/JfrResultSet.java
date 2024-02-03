@@ -55,9 +55,7 @@ class JfrResultSet implements ResultSet {
   public void close() throws SQLException {
     if (!this.closed) {
       this.callEvent.rowCount = this.rowCount;
-      this.callEvent.end();
-      this.callEvent.commit();
-      this.callEvent.closed = true;
+      this.callEvent.close();
       this.callEvent = null;
       this.closed = true;
     }
