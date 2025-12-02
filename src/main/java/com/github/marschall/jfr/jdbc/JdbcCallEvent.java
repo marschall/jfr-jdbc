@@ -25,4 +25,11 @@ class JdbcCallEvent extends Event {
     this.query = query;
   }
 
+  void close() {
+    if (!closed) {
+      closed = true;
+      end();
+      commit();
+    }
+  }
 }

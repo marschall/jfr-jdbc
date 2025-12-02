@@ -53,9 +53,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
   @Override
   public void close() throws SQLException {
     if (!this.closed && !this.callEvent.closed) {
-      this.callEvent.end();
-      this.callEvent.commit();
-      this.callEvent.closed = true;
+      this.callEvent.close();
       this.closed = true;
     }
     this.delegate.close();
@@ -228,9 +226,7 @@ class JfrPreparedStatement extends JfrStatement implements PreparedStatement {
   @Override
   public void clearParameters() throws SQLException {
     if (!this.closed && !this.callEvent.closed) {
-      this.callEvent.end();
-      this.callEvent.commit();
-      this.callEvent.closed = true;
+      this.callEvent.close();
       
       this.callEvent = new JdbcCallEvent(this.callEvent.query);
     }
