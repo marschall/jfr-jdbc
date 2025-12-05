@@ -67,7 +67,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>2.3.232</version>
+      <version>2.4.240</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -127,18 +127,11 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <release>11</release>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <links>
             <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
           </links>
-          <release>11</release>
           <notimestamp>true</notimestamp>
         </configuration>
         <executions>
@@ -153,9 +146,26 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>--add-opens com.github.marschall.jfr.jdbc/com.github.marschall.jfr.jdbc=ALL-UNNAMED</argLine>
-        </configuration>
+        <executions>
+          <!-- run with module path -->
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <configuration>
+              <argLine>--add-opens com.github.marschall.jfr.jdbc/com.github.marschall.jfr.jdbc=ALL-UNNAMED</argLine>
+            </configuration>
+          </execution>
+          <execution>
+            <id>classpath-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <useModulePath>false</useModulePath>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
@@ -267,6 +277,7 @@
   </profiles>
 
   <properties>
+    <maven.compiler.release>11</maven.compiler.release>
     <project.build.outputTimestamp>2023-11-28T16:46:43Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
