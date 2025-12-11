@@ -38,11 +38,13 @@ public final class JfrDriver implements Driver {
     if (!this.acceptsURL(url)) {
       throw new SQLException("invalid url: " + url);
     }
+    String connectionString = "jdbc:" + url.substring(9);
     var event = new JdbcOperationEvent();
     event.operationObject = "Driver";
     event.operationName = "connect";
+    event.query = connectionString;
     try {
-      return new JfrConnection(DriverManager.getConnection("jdbc:" + url.substring(9), info));
+      return new JfrConnection(DriverManager.getConnection(connectionString, info));
     } finally {
       event.end();
       event.commit();

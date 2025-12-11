@@ -81,6 +81,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-jfr</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <scope>test</scope>
@@ -99,6 +104,11 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-jcl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-jul</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -146,7 +156,13 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>--add-opens com.github.marschall.jfr.jdbc/com.github.marschall.jfr.jdbc=ALL-UNNAMED</argLine>
+          <argLine>
+              --add-opens com.github.marschall.jfr.jdbc/com.github.marschall.jfr.jdbc=ALL-UNNAMED
+              -XX:StartFlightRecording=dumponexit=true,filename=${project.build.directory}/jfr-jdbc.jfr
+          </argLine>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.apache.logging.log4j.jul.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
